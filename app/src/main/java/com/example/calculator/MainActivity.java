@@ -5,20 +5,29 @@ import android.view.View; // Импортируем класс View для ра�
 import android.widget.Button; // Импортируем класс Button для работы с кнопками
 import android.widget.TextView; // Импортируем класс TextView для работы с текстовыми полями
 import androidx.appcompat.app.AppCompatActivity; // Импортируем базовый класс для создания Activities с ActionBar
+import androidx.lifecycle.ViewModelProvider; // Импортируем ViewModelProvider для работы с ViewModel
 
 public class MainActivity extends AppCompatActivity { // Основной класс приложения, наследует от AppCompatActivity
 
     private TextView resultTextView; // Текстовое поле, отображающее результат вычислений
-    private String currentInput = ""; // Строка для хранения текущего ввода пользователя
-    private String previousInput = ""; // Строка для хранения предыдущего ввода
-    private String operator = ""; // Строка для хранения оператора (например, +, -, *, /)
+    private CalculatorViewModel viewModel; // ViewModel для управления данными калькулятора
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { // Метод вызывается при создании активности
-        super.onCreate(savedInstanceState); // Вызов метода родителя
+        super.onCreate(savedInstanceState); // Вызов метода родителя для инициализации
         setContentView(R.layout.activity_main); // Устанавливаем макет интерфейса для этой активности
 
+        // Инициализация ViewModel
+        viewModel = new ViewModelProvider(this).get(CalculatorViewModel.class); // Получаем экземпляр ViewModel
+
         resultTextView = findViewById(R.id.resultTextView); // Находим элемент TextView по его идентификатору
+
+        // Отображаем результат или текущий ввод
+        if(!viewModel.getResult().isEmpty()) {
+            resultTextView.setText(viewModel.getResult());
+        } else {
+            resultTextView.setText(viewModel.getCurrentInput());
+        }
 
         // Инициализация кнопок
         Button button1 = findViewById(R.id.button1); // Находим кнопку "1"
@@ -50,6 +59,7 @@ public class MainActivity extends AppCompatActivity { // Основной кла
         button9.setOnClickListener(view -> appendToInput("9")); // При нажатии добавляем "9" к текущему вводу
         button0.setOnClickListener(view -> appendToInput("0")); // При нажатии добавляем "0" к текущему вводу
 
+        // Установка операторов
         buttonPlus.setOnClickListener(view -> setOperator("+")); // Устанавливаем оператор "+" при нажатии
         buttonMinus.setOnClickListener(view -> setOperator("-")); // Устанавливаем оператор "-" при нажатии
         buttonMultiply.setOnClickListener(view -> setOperator("*")); // Устанавливаем оператор "*" при нажатии
@@ -60,20 +70,26 @@ public class MainActivity extends AppCompatActivity { // Основной кла
     }
 
     private void appendToInput(String value) { // Метод для добавления значения к текущему вводу
-        currentInput += value; // Добавляем значение к текущему вводу
-        resultTextView.setText(currentInput); // Обновляем текстовое поле для отображения нового ввода
+        viewModel.setCurrentInput(viewModel.getCurrentInput() + value); // Обновляем текущий ввод в ViewModel
+        resultTextView.setText(viewModel.getCurrentInput()); // Отображаем обновленный ввод в TextView
     }
 
     private void setOperator(String op) { // Метод для установки оператора
-        if (!currentInput.isEmpty()) { // Проверяем, не пустой ли текущий ввод
-            previousInput = currentInput; // Сохраняем текущий ввод как предыдущий
-            operator = op; // Устанавливаем оператор
-            currentInput = ""; // Очищаем текущий ввод для следующего числа
+        if (!viewModel.getCurrentInput().isEmpty()) { // Проверяем, что текущий ввод не пуст
+            viewModel.setPreviousInput(viewModel.getCurrentInput()); // Сохраняем текущий ввод как предыдущий
+            viewModel.setOperator(op); // Устанавливаем оператор
+            viewModel.setCurrentInput(""); // Очищаем текущий ввод для следующего числа
         }
     }
 
     private void calculateResult() { // Метод для вычисления результата
-        if (!previousInput.isEmpty() && !currentInput.isEmpty() && !operator.isEmpty()) { // Проверяем, что все необходимые данные введены
+        // Получаем значения из ViewModel
+        String currentInput = viewModel.getCurrentInput();
+        String previousInput = viewModel.getPreviousInput();
+        String operator = viewModel.getOperator();
+
+        // Проверяем, что все необходимые данные введены
+        if (!previousInput.isEmpty() && !currentInput.isEmpty() && !operator.isEmpty()) {
             double num1 = Double.parseDouble(previousInput); // Преобразуем предыдущий ввод в число
             double num2 = Double.parseDouble(currentInput); // Преобразуем текущий ввод в число
             double result = 0; // Переменная для хранения результата
@@ -98,16 +114,19 @@ public class MainActivity extends AppCompatActivity { // Основной кла
                     break; // Выходим из switch
             }
             resultTextView.setText(String.valueOf(result)); // Отображаем результат в текстовом поле
-            currentInput = ""; // Очищаем текущий ввод
-            previousInput = ""; // Очищаем предыдущий ввод
-            operator = ""; // Очищаем оператор
+            viewModel.setResult(String.valueOf(result)); // Сохраняем результат в ViewModel
+
+            // Очищаем значения в ViewModel
+            viewModel.setCurrentInput("");
+            viewModel.setPreviousInput("");
+            viewModel.setOperator("");
         }
     }
 
     private void clearInput() { // Метод для очистки всего ввода и отображения
-        currentInput = ""; // Очищаем текущий ввод
-        previousInput = ""; // Очищаем предыдущий ввод
-        operator = ""; // Очищаем оператор
-        resultTextView.setText("0"); // Устанавливаем текстовое поле в значение "0"
+        viewModel.setCurrentInput(""); // Очищаем текущий ввод в ViewModel
+        viewModel.setPreviousInput(""); // Очищаем предыдущий ввод в ViewModel
+        viewModel.setOperator(""); // Очищаем оператор в ViewModel
+        resultTextView.setText("0"); // Отображаем "0" в TextView
     }
 }

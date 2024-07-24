@@ -32,6 +32,7 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
 
     implementation(libs.appcompat)
     implementation(libs.material)
