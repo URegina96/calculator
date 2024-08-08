@@ -1,5 +1,7 @@
 package com.example.calculator;
 
+import android.text.TextUtils;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -20,7 +22,7 @@ public class CalculatorViewModel extends ViewModel {
         }
 
         // Если текущий ввод "0", заменяем его на новое значение (если это не "0"), чтобы избежать ввода вида "00"
-        if (currentInput.equals("0") && !value.equals(".")) {
+        if (TextUtils.equals(currentInput, "0") && !value.equals(".")) {
             currentInput = value; // Устанавливаем новое значение как текущее
         } else {
             currentInput += value; // В противном случае добавляем новое значение к текущему
