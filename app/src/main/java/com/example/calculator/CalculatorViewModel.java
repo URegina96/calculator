@@ -22,7 +22,7 @@ public class CalculatorViewModel extends ViewModel {
         }
 
         // Если текущий ввод "0", заменяем его на новое значение (если это не "0"), чтобы избежать ввода вида "00"
-        if (TextUtils.equals(currentInput, "0") && !value.equals(".")) {
+        if ( TextUtils.equals(currentInput, "0") && !value.equals(".") ) {
             currentInput = value; // Устанавливаем новое значение как текущее
         } else {
             currentInput += value; // В противном случае добавляем новое значение к текущему
