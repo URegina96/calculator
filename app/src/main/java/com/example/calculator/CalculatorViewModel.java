@@ -100,5 +100,18 @@ public class CalculatorViewModel extends ViewModel {
             display.setValue(currentInput.isEmpty() ? "0" : currentInput);
         }
     }
-
+    public void deleteLastCharacterFromResult() {
+        if (!previousInput.isEmpty() && currentInput.isEmpty()) { // Если есть результат и текущий ввод пуст
+            previousInput = previousInput.substring(0, previousInput.length() - 1);
+            if (previousInput.isEmpty()) {
+                display.setValue("0");
+            } else {
+                // Удаляем ненужную точку, если она в конце
+                if (previousInput.endsWith(".")) {
+                    previousInput = previousInput.substring(0, previousInput.length() - 1);
+                }
+                display.setValue(previousInput);
+            }
+        }
+    }
 }

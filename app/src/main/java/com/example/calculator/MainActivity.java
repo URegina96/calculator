@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setupButtons();// Настраиваем кнопки калькулятора
 
         findViewById(R.id.buttonDelete).setOnClickListener(view -> viewModel.deleteLastCharacter());
+        findViewById(R.id.buttonDeleteResult).setOnClickListener(view -> viewModel.deleteLastCharacterFromResult());
 
     }
 
