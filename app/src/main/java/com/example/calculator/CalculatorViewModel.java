@@ -93,4 +93,12 @@ public class CalculatorViewModel extends ViewModel {
         operator = ""; // Очищаем оператор
         display.setValue("0"); // Устанавливаем отображаемое значение в "0"
     }
+
+    public void deleteLastCharacter() {
+        if (!currentInput.isEmpty()) {
+            currentInput = currentInput.substring(0, currentInput.length() - 1);
+            display.setValue(currentInput.isEmpty() ? "0" : currentInput);
+        }
+    }
+
 }

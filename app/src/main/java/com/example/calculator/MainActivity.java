@@ -20,6 +20,9 @@ public class MainActivity extends AppCompatActivity {
         resultTextView = findViewById(R.id.resultTextView); // Находим элемент TextView для отображения результата
         viewModel.getDisplay().observe(this, result -> resultTextView.setText(result));  // Подписываемся на изменения в LiveData и обновляем результат в TextView
         setupButtons();// Настраиваем кнопки калькулятора
+
+        findViewById(R.id.buttonDelete).setOnClickListener(view -> viewModel.deleteLastCharacter());
+
     }
 
     private void setupButtons() {
